@@ -654,6 +654,7 @@
       params.get("key") || sessionStorage.getItem("farewellAdminKey") || "";
     const isAdmin = Boolean(adminMode && adminKey);
     const blankStatus = { entry: false };
+    const dummyVideoUrl = "https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0&autoplay=1"; // change this link later
 
     function titleCase(name) {
       return name
@@ -998,6 +999,13 @@
                 <div class="holes"><span class="hole"></span><span class="hole"></span><span class="hole"></span></div>
               </div>
               <div class="verified" id="verifiedLine">Ticket details loaded</div>
+              <button class="btn" id="verifyVideoBtn" style="margin:18px auto 0;display:block;">Verify &amp; Play Video</button>
+              <div id="videoContainer" style="display:none; margin-top:18px;">
+                <div class="small-label">Verified Video</div>
+                <div style="position:relative;padding-top:56.25%;margin-top:10px;">
+                  <iframe id="videoFrame" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute;top:0;left:0;width:100%;height:100%;border-radius:12px;"> </iframe>
+                </div>
+              </div>
               <br />
             </article>
           </section>
@@ -1033,11 +1041,21 @@
       refreshTicket().then((apiConnected) => {
         if (apiConnected) setInterval(refreshTicket, 3000);
       });
+
+      const verifyVideoBtn = document.getElementById("verifyVideoBtn");
+      const videoContainer = document.getElementById("videoContainer");
+      const videoFrame = document.getElementById("videoFrame");
+      verifyVideoBtn?.addEventListener("click", () => {
+        verifyVideoBtn.disabled = true;
+        verifyVideoBtn.textContent = "Loading video...";
+        videoFrame.src = dummyVideoUrl;
+        videoContainer.style.display = "block";
+        verifyVideoBtn.textContent = "Verified + Video Loaded";
+      });
     }
 
     function renderMissing() {
       app.innerHTML = `
-          <section class="missing">
             <div class="missing-box">
               <h1>Invalid Pass</h1>
               <p class="sub">No senior found for this QR code.</p>
