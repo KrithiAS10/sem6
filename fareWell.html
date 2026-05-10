@@ -702,15 +702,31 @@
       }
 
       async function getStatus(usn) {
-        const response = await fetch(
-          `/api/status?usn=${encodeURIComponent(usn)}`,
-          { cache: "no-store" },
-        );
-        if (!response.ok) throw new Error("Status API unavailable");
-        return response.json();
+        try {
+          const response = await fetch(
+            `/api/status?usn=${encodeURIComponent(usn)}`,
+            { cache: "no-store" },
+          );
+          if (response.ok) return response.json();
+        } catch (error) {
+          console.warn("Status API unavailable, using local fallback", error);
+        }
+        const localStatus = loadLocalStatus();
+        return localStatus[usn] || blankStatus;
       }
 
       async function getAllStatus() {
+        try {
+          const response = await fetch("/api/all", {
+            cache: "no-store",
+            headers: { "X-Admin-Key": adminKey },
+          });
+          if (response.ok) return response.json();
+        } catch (error) {
+          console.warn("Admin status API unavailable, using local fallback", error);
+        }
+        return loadLocalStatus();
+      }
         const response = await fetch("/api/all", {
           cache: "no-store",
           headers: { "X-Admin-Key": adminKey },
@@ -725,21 +741,31 @@
       }
 
       async function markStatus(usn, field, value) {
-        const response = await fetch("/api/mark", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Admin-Key": adminKey,
-          },
-          body: JSON.stringify({ usn, field, value }),
-        });
-        if (!response.ok) {
-          const data = await response.json().catch(() => ({}));
-          throw new Error(
-            data.error || `Could not update status (${response.status})`,
-          );
+        try {
+          const response = await fetch("/api/mark", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Admin-Key": adminKey,
+            },
+            body: JSON.stringify({ usn, field, value }),
+          });
+          if (response.ok) return response.json();
+          console.warn("Mark API returned non-ok status, falling back to local", response.status);
+        } catch (error) {
+          console.warn("Mark API unavailable, using local fallback", error);
         }
-        return response.json();
+
+        const localStatus = loadLocalStatus();
+        const updatedStatus = {
+          ...localStatus,
+          [usn]: {
+            ...localStatus[usn],
+            [field]: value,
+          },
+        };
+        saveLocalStatus(updatedStatus);
+        return updatedStatus[usn];
       }
 
       function adminUrl(mode) {
