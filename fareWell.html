@@ -1,742 +1,754 @@
 <!doctype html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LogOut 2022-26 Passes</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --gold: #f2c200;
-      --gold-soft: #ffe28a;
-      --ink: #0b0905;
-      --panel: #171105;
-      --panel-2: #211906;
-      --muted: #8b8170;
-      --green: #76ff6a;
-      --green-bg: #071c05;
-      --line: rgba(242, 194, 0, 0.28);
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background:
-        radial-gradient(circle at top left,
-          rgba(242, 194, 0, 0.15),
-          transparent 32rem),
-        radial-gradient(circle at bottom right,
-          rgba(179, 27, 24, 0.22),
-          transparent 34rem),
-        #090704;
-      color: #f7efd8;
-      font-family: "Segoe UI", Arial, sans-serif;
-    }
-
-    button,
-    input {
-      font: inherit;
-    }
-
-    .admin {
-      width: min(1180px, calc(100% - 32px));
-      margin: 28px auto 60px;
-    }
-
-    .admin-bar {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 18px;
-      align-items: end;
-      margin-bottom: 22px;
-    }
-
-    h1 {
-      margin: 0 0 8px;
-      color: var(--gold);
-      font-size: clamp(1.8rem, 4vw, 3rem);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .sub {
-      margin: 0;
-      color: #b7aa8f;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      font-size: 0.78rem;
-    }
-
-    .controls {
-      display: grid;
-      grid-template-columns: minmax(220px, 1fr) auto auto;
-      gap: 10px;
-      margin: 20px 0;
-    }
-
-    .controls input {
-      min-width: 0;
-      height: 42px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #120e06;
-      color: #f7efd8;
-      padding: 0 12px;
-    }
-
-    .btn {
-      height: 42px;
-      border: 1px solid var(--gold);
-      border-radius: 8px;
-      background: var(--gold);
-      color: #151000;
-      padding: 0 16px;
-      font-weight: 800;
-      cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .btn.secondary {
-      background: transparent;
-      color: var(--gold);
-    }
-
-    .student-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-      gap: 16px;
-    }
-
-    .pass-card {
-      position: relative;
-      background: #ffffff;
-      border-radius: 14px;
-      padding: 0;
-      overflow: hidden;
-      display: flex;
-      flex-direction: row;
-      align-items: stretch;
-      height: 440px;
-      break-inside: avoid;
-      border: 1px solid #ddd;
-      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
-    }
-
-    .film-side {
-      display: none;
-    }
-
-    .film-hole {
-      display: none;
-    }
-
-    .pass-inner {
-      flex: 1;
-      background: #ffffff;
-      margin: 0;
-      padding: 22px 16px 18px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      color: #111;
-    }
-
-    .pass-bottom {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-    }
-
-    .pass-star {
-      font-size: 1.3rem;
-      color: #f2c200;
-      margin-bottom: 2px;
-      filter: drop-shadow(0 0 6px rgba(242, 194, 0, 0.9));
-    }
-
-    .pass-name {
-      font-family: 'Dancing Script', cursive;
-      font-size: 2.5rem;
-      color: #1a1a1a;
-      line-height: 1.2;
-      margin-bottom: 6px;
-    }
-
-    .pass-vip {
-      font-family: Georgia, serif;
-      font-size: 2.1rem;
-      font-weight: 900;
-      color: #111;
-      letter-spacing: 0.06em;
-      line-height: 1;
-    }
-
-    .pass-access-label {
-      font-size: 0.68rem;
-      font-weight: 800;
-      color: #444;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-
-    .qr {
-      width: 162px;
-      height: 162px;
-      padding: 6px;
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      margin: 4px auto 8px;
-    }
-
-    .qr img,
-    .qr canvas {
-      width: 150px !important;
-      height: 150px !important;
-    }
-
-    .pass-divider {
-      width: 100%;
-      height: 5px;
-      background: #111;
-      margin: 8px 0 10px;
-      border-radius: 2px;
-    }
-
-    .pass-scan {
-      font-size: 0.62rem;
-      color: #555;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      margin-top: 6px;
-      font-weight: 700;
-      border-top: 1px dashed #ccc;
-      padding-top: 8px;
-      width: 100%;
-      text-align: center;
-    }
-
-    .pass-seat-tag {
-      margin-top: 4px;
-      font-size: 0.68rem;
-      color: #666;
-      font-weight: 700;
-    }
-
-    .pass-note {
-      border-top: 1px dashed #ccc;
-      padding-top: 7px;
-      margin-top: 7px;
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      color: #555;
-      font-size: 0.72rem;
-      font-weight: 800;
-      text-transform: uppercase;
-    }
-
-    .small-label {
-      color: var(--muted);
-      font-size: 0.68rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-    }
-
-    .seat-pill {
-      min-width: 46px;
-      border-radius: 8px;
-      background: var(--gold);
-      color: #070500;
-      padding: 7px 8px;
-      text-align: center;
-      font-weight: 900;
-    }
-
-    .admin-list {
-      display: grid;
-      gap: 10px;
-    }
-
-    .admin-row {
-      display: grid;
-      grid-template-columns: 70px 1fr 140px;
-      gap: 10px;
-      align-items: center;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #141007;
-      padding: 12px;
-    }
-
-    .admin-row .btn {
-      width: 100%;
-      padding: 0 10px;
-      font-size: 0.78rem;
-    }
-
-    .admin-row .btn:disabled {
-      opacity: 0.7;
-      cursor: default;
-    }
-
-    .admin-row .btn.used {
-      border-color: rgba(118, 255, 106, 0.45);
-      background: #092006;
-      color: var(--green);
-    }
-
-    .status-line {
-      margin-top: 4px;
-      color: #9d927c;
-      font-size: 0.78rem;
-    }
-
-    .ticket-state {
-      margin-top: 12px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-
-    .state-pill {
-      border: 1px solid rgba(242, 194, 0, 0.22);
-      border-radius: 8px;
-      background: rgba(242, 194, 0, 0.06);
-      padding: 11px 12px;
-    }
-
-    .state-pill.ok {
-      border-color: rgba(118, 255, 106, 0.45);
-      background: var(--green-bg);
-    }
-
-    .ticket-wrap {
-      width: min(868px, calc(100% - 14px));
-      margin: 10px auto;
-    }
-
-    .ticket {
-      position: relative;
-      overflow: hidden;
-      border: 1px solid var(--gold);
-      border-radius: 14px;
-      background:
-        repeating-linear-gradient(90deg,
-          rgba(255, 255, 255, 0.025) 0 1px,
-          transparent 1px 8px),
-        linear-gradient(145deg, #0b0905, #171104 52%, #0b0905);
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.48);
-    }
-
-    .film-strip {
-      height: 38px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-      background: #111;
-      padding: 0 10px;
-    }
-
-    .film-strip.bottom {
-      border-top: 1px solid rgba(255, 255, 255, 0.12);
-      border-bottom: 0;
-    }
-
-    .holes {
-      display: flex;
-      gap: 14px;
-    }
-
-    .hole {
-      width: 22px;
-      height: 22px;
-      border: 1px solid #333;
-      border-radius: 4px;
-      background: #070707;
-    }
-
-    .strip-text {
-      color: #6f6f6f;
-      font-size: 0.74rem;
-      letter-spacing: 0.44em;
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-
-    .ticket-body {
-      padding: 20px;
-    }
-
-    .title-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 18px;
-      align-items: start;
-    }
-
-    .brand {
-      color: var(--gold);
-      font-size: clamp(1.55rem, 6vw, 2rem);
-      font-weight: 950;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-    }
-
-    .meta-line {
-      margin-top: 8px;
-      color: #969083;
-      font-size: 0.86rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-    }
-
-    .seat-box {
-      min-width: 80px;
-      border-radius: 8px;
-      background: var(--gold);
-      color: #090700;
-      padding: 10px 8px;
-      text-align: center;
-      font-weight: 950;
-    }
-
-    .seat-box span {
-      display: block;
-      font-size: 0.62rem;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-    }
-
-    .seat-box strong {
-      display: block;
-      margin-top: 3px;
-      font-size: 1.35rem;
-    }
-
-    .profile {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 14px 0;
-      padding: 16px;
-      border: 1px solid rgba(242, 194, 0, 0.18);
-      border-radius: 8px;
-      background: rgba(242, 194, 0, 0.06);
-    }
-
-    .avatar {
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      flex: 0 0 auto;
-      background: var(--gold);
-      color: #0a0700;
-      font-weight: 950;
-    }
-
-    .profile-name {
-      font-size: clamp(1.1rem, 5vw, 1.35rem);
-      font-weight: 900;
-      line-height: 1.15;
-    }
-
-    .details {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin: 14px 0 12px;
-    }
-
-    .detail-value {
-      margin-top: 4px;
-      color: var(--gold-soft);
-      font-weight: 900;
-      font-size: 1.04rem;
-    }
-
-    .verified {
-      color: #807866;
-      text-align: center;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      font-size: 0.76rem;
-    }
-
-    .missing {
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 24px;
-      text-align: center;
-    }
-
-    .missing-box {
-      width: min(460px, 100%);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 24px;
-      background: #151007;
-    }
-
-    @media (max-width: 720px) {
-
-      .admin-bar,
-      .controls,
-      .details,
-      .admin-row,
-      .ticket-state {
-        grid-template-columns: 1fr;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LogOut 2022-26 Passes</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --gold: #f2c200;
+        --gold-soft: #ffe28a;
+        --ink: #0b0905;
+        --panel: #171105;
+        --panel-2: #211906;
+        --muted: #8b8170;
+        --green: #76ff6a;
+        --green-bg: #071c05;
+        --line: rgba(242, 194, 0, 0.28);
       }
 
-      .controls .btn {
-        width: 100%;
+      * {
+        box-sizing: border-box;
       }
 
-      .ticket-body {
-        padding: 18px 14px;
-      }
-
-      .film-strip {
-        gap: 6px;
-      }
-
-      .holes {
-        gap: 8px;
-      }
-
-      .hole {
-        width: 18px;
-        height: 18px;
-      }
-
-      .strip-text {
-        letter-spacing: 0.24em;
-        font-size: 0.64rem;
-      }
-    }
-
-    @media print {
       body {
-        background: white;
-        color: black;
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(
+            circle at top left,
+            rgba(242, 194, 0, 0.15),
+            transparent 32rem
+          ),
+          radial-gradient(
+            circle at bottom right,
+            rgba(179, 27, 24, 0.22),
+            transparent 34rem
+          ),
+          #090704;
+        color: #f7efd8;
+        font-family: "Segoe UI", Arial, sans-serif;
       }
 
-      .controls,
-      .admin-bar .btn,
-      .actions {
-        display: none !important;
+      button,
+      input {
+        font: inherit;
       }
 
       .admin {
-        width: 100%;
+        width: min(1180px, calc(100% - 32px));
+        margin: 28px auto 60px;
+      }
+
+      .admin-bar {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 18px;
+        align-items: end;
+        margin-bottom: 22px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        color: var(--gold);
+        font-size: clamp(1.8rem, 4vw, 3rem);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .sub {
         margin: 0;
+        color: #b7aa8f;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        font-size: 0.78rem;
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: minmax(220px, 1fr) auto auto;
+        gap: 10px;
+        margin: 20px 0;
+      }
+
+      .controls input {
+        min-width: 0;
+        height: 42px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #120e06;
+        color: #f7efd8;
+        padding: 0 12px;
+      }
+
+      .btn {
+        height: 42px;
+        border: 1px solid var(--gold);
+        border-radius: 8px;
+        background: var(--gold);
+        color: #151000;
+        padding: 0 16px;
+        font-weight: 800;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .btn.secondary {
+        background: transparent;
+        color: var(--gold);
       }
 
       .student-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+        gap: 16px;
       }
 
       .pass-card {
-        box-shadow: none;
+        position: relative;
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 0;
+        overflow: hidden;
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        height: 440px;
+        break-inside: avoid;
+        border: 1px solid #ddd;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
       }
 
-      .pass-inner {
-        background: white;
+      .film-side {
+        display: none;
       }
 
       .film-hole {
-        background: #c0392b !important;
+        display: none;
       }
-    }
-  </style>
-</head>
 
-<body>
-  <main id="app"></main>
-
-  <script>
-    const students = [
-      ["4JK22CS001", "AAKASH SHARMA"],
-      ["4JK22CS002", "ADITH K V"],
-      ["4JK22CS003", "ADON MATHEW JOSEPH"],
-      ["4JK22CS004", "AFTHAB ABDULLA MA"],
-      ["4JK22CS005", "AKHIL A"],
-      ["4JK22CS006", "ALOK YADAV"],
-      ["4JK22CS007", "AMAL NAHAN N"],
-      ["4JK22CS008", "AMAN HASAN"],
-      ["4JK22CS010", "ANSTON ANAND BANGERA"],
-      ["4JK22CS011", "SUJAL RAMESH"],
-      ["4JK22CS012", "DEEKSHITH V"],
-      ["4JK22CS013", "DEVANAND P"],
-      ["4JK22CS014", "DHANYA V SHETTY"],
-      ["4JK22CS015", "G SAIKUMAR"],
-      ["4JK22CS016", "GAURESH G PAI"],
-      ["4JK22CS017", "HARSHITHA"],
-      ["4JK22CS018", "HIMANSHU HEGDE"],
-      ["4JK22CS019", "JESVIN GEORGE"],
-      ["4JK22CS020", "JNANESH"],
-      ["4JK22CS021", "JOYEL GEORGE"],
-      ["4JK22CS022", "JUSTIN P S"],
-      ["4JK22CS023", "KARTHIK SUBHASH TANDEL"],
-      ["4JK22CS024", "KARTHIKA RAJ P M"],
-      ["4JK22CS025", "PAANDIYAVARSHINI"],
-      ["4JK22CS026", "MADHUKAR K S"],
-      ["4JK22CS027", "MILAN C I"],
-      ["4JK22CS028", "MOKSHA SHETTY"],
-      ["4JK22CS029", "MUHAMED ISHRAQ"],
-      ["4JK22CS030", "NANDAN B DESHAMUKH"],
-      ["4JK22CS031", "NAVANEETH K"],
-      ["4JK22CS032", "NAWA N"],
-      ["4JK22CS033", "NAYANA POOJARY"],
-      ["4JK22CS034", "NEHA MAHESH P A"],
-      ["4JK22CS035", "KEERTANA"],
-      ["4JK22CS036", "PAVAN KUMAR"],
-      ["4JK22CS037", "PRAJWAL K"],
-      ["4JK22CS038", "PRAKRITHI"],
-      ["4JK22CS039", "PREKSHAN K P R"],
-      ["4JK22CS040", "RAKSHA"],
-      ["4JK22CS041", "RAKSHITHA ACHARYA"],
-      ["4JK22CS043", "RISHITHA P SALIAN"],
-      ["4JK22CS044", "RITHUL T"],
-      ["4JK22CS045", "SAGAR SHETTY"],
-      ["4JK22CS046", "SANJAN T SUVARNA"],
-      ["4JK22CS047", "SANJANA"],
-      ["4JK22CS048", "SANMITHA S"],
-      ["4JK22CS049", "SHAFIQAH M SAYED"],
-      ["4JK22CS050", "SHIBANI"],
-      ["4JK22CS051", "SHIVACHARAN J RAI"],
-      ["4JK22CS052", "SHREEPATHI"],
-      ["4JK22CS053", "SHREYA"],
-      ["4JK22CS054", "SHRIRAM I"],
-      ["4JK22CS055", "STHUTHI DOLPADY"],
-      ["4JK22CS056", "TANYA M SHETTY"],
-      ["4JK22CS057", "THRISHA U SHETTY"],
-      ["4JK22CS058", "VAISHNAVI R GATTY"],
-      ["4JK22CS059", "VEERABADRA M"],
-      ["4JK22CS060", "VIGNESH"],
-      ["4JK22CS061", "VISHNU C"],
-      ["4JK22CS062", "VIVEK M P"],
-      ["4JK22CS063", "YASHAS KUMAR"],
-      ["4JK23CS400", "DARSHAN B S"],
-      ["4JK23CS401", "KSHITIJ RAMIN"],
-      ["4JK23CS402", "NITHEESH ISHWAR NAIK"],
-      ["4JK23CS403", "SUHAS S"],
-    ].map(([usn, name], index) => ({
-      usn,
-      name,
-      seat: `A${String(index + 1).padStart(2, "0")}`,
-    }));
-
-    const app = document.getElementById("app");
-    const params = new URLSearchParams(window.location.search);
-    const scannedId = params.get("id") || params.get("usn");
-    const adminMode = params.get("admin");
-    const adminKey =
-      params.get("key") || sessionStorage.getItem("farewellAdminKey") || "";
-    const isAdmin = Boolean(adminMode && adminKey);
-    const blankStatus = { entry: false };
-    const dummyVideoUrl = "https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0&autoplay=1"; // change this link later
-
-    function titleCase(name) {
-      return name
-        .toLowerCase()
-        .split(" ")
-        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-        .join(" ");
-    }
-
-    function initials(name) {
-      return name
-        .split(" ")
-        .filter(Boolean)
-        .slice(0, 2)
-        .map((part) => part[0])
-        .join("");
-    }
-
-    function scanUrl(base, student) {
-      const cleanBase = base.split("?")[0].split("#")[0];
-      return `${cleanBase}?id=${encodeURIComponent(student.seat)}`;
-    }
-
-    function renderQr(element, text, size) {
-      element.innerHTML = "";
-      if (!window.QRCode) {
-        element.textContent = "QR";
-        return;
+      .pass-inner {
+        flex: 1;
+        background: #ffffff;
+        margin: 0;
+        padding: 22px 16px 18px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        color: #111;
       }
-      new QRCode(element, {
-        text,
-        width: size,
-        height: size,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.M,
-      });
-    }
 
-    async function getStatus(usn) {
-      const response = await fetch(
-        `/api/status?usn=${encodeURIComponent(usn)}`,
-        { cache: "no-store" },
-      );
-      if (!response.ok) throw new Error("Status API unavailable");
-      return response.json();
-    }
-
-    async function getAllStatus() {
-      const response = await fetch("/api/all", {
-        cache: "no-store",
-        headers: { "X-Admin-Key": adminKey },
-      });
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        throw new Error(data.error || `Status API unavailable (${response.status})`);
+      .pass-bottom {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
       }
-      return response.json();
-    }
 
-    async function markStatus(usn, field, value) {
-      const response = await fetch("/api/mark", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Admin-Key": adminKey,
-        },
-        body: JSON.stringify({ usn, field, value }),
-      });
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        throw new Error(data.error || `Could not update status (${response.status})`);
+      .pass-star {
+        font-size: 1.3rem;
+        color: #f2c200;
+        margin-bottom: 2px;
+        filter: drop-shadow(0 0 6px rgba(242, 194, 0, 0.9));
       }
-      return response.json();
-    }
 
-    function adminUrl(mode) {
-      return `${window.location.href.split("?")[0]}?admin=${mode}&key=${encodeURIComponent(adminKey)}`;
-    }
+      .pass-name {
+        font-family: "Dancing Script", cursive;
+        font-size: 2.5rem;
+        color: #1a1a1a;
+        line-height: 1.2;
+        margin-bottom: 6px;
+      }
 
-    function renderAdminLogin(mode = "1") {
-      app.innerHTML = `
+      .pass-vip {
+        font-family: Georgia, serif;
+        font-size: 2.1rem;
+        font-weight: 900;
+        color: #111;
+        letter-spacing: 0.06em;
+        line-height: 1;
+      }
+
+      .pass-access-label {
+        font-size: 0.68rem;
+        font-weight: 800;
+        color: #444;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+
+      .qr {
+        width: 162px;
+        height: 162px;
+        padding: 6px;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin: 4px auto 8px;
+      }
+
+      .qr img,
+      .qr canvas {
+        width: 150px !important;
+        height: 150px !important;
+      }
+
+      .pass-divider {
+        width: 100%;
+        height: 5px;
+        background: #111;
+        margin: 8px 0 10px;
+        border-radius: 2px;
+      }
+
+      .pass-scan {
+        font-size: 0.62rem;
+        color: #555;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        margin-top: 6px;
+        font-weight: 700;
+        border-top: 1px dashed #ccc;
+        padding-top: 8px;
+        width: 100%;
+        text-align: center;
+      }
+
+      .pass-seat-tag {
+        margin-top: 4px;
+        font-size: 0.68rem;
+        color: #666;
+        font-weight: 700;
+      }
+
+      .pass-note {
+        border-top: 1px dashed #ccc;
+        padding-top: 7px;
+        margin-top: 7px;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        color: #555;
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .small-label {
+        color: var(--muted);
+        font-size: 0.68rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      .seat-pill {
+        min-width: 46px;
+        border-radius: 8px;
+        background: var(--gold);
+        color: #070500;
+        padding: 7px 8px;
+        text-align: center;
+        font-weight: 900;
+      }
+
+      .admin-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .admin-row {
+        display: grid;
+        grid-template-columns: 70px 1fr 140px;
+        gap: 10px;
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #141007;
+        padding: 12px;
+      }
+
+      .admin-row .btn {
+        width: 100%;
+        padding: 0 10px;
+        font-size: 0.78rem;
+      }
+
+      .admin-row .btn:disabled {
+        opacity: 0.7;
+        cursor: default;
+      }
+
+      .admin-row .btn.used {
+        border-color: rgba(118, 255, 106, 0.45);
+        background: #092006;
+        color: var(--green);
+      }
+
+      .status-line {
+        margin-top: 4px;
+        color: #9d927c;
+        font-size: 0.78rem;
+      }
+
+      .ticket-state {
+        margin-top: 12px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .state-pill {
+        border: 1px solid rgba(242, 194, 0, 0.22);
+        border-radius: 8px;
+        background: rgba(242, 194, 0, 0.06);
+        padding: 11px 12px;
+      }
+
+      .state-pill.ok {
+        border-color: rgba(118, 255, 106, 0.45);
+        background: var(--green-bg);
+      }
+
+      .ticket-wrap {
+        width: min(868px, calc(100% - 14px));
+        margin: 10px auto;
+      }
+
+      .ticket {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--gold);
+        border-radius: 14px;
+        background:
+          repeating-linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.025) 0 1px,
+            transparent 1px 8px
+          ),
+          linear-gradient(145deg, #0b0905, #171104 52%, #0b0905);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.48);
+      }
+
+      .film-strip {
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        background: #111;
+        padding: 0 10px;
+      }
+
+      .film-strip.bottom {
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        border-bottom: 0;
+      }
+
+      .holes {
+        display: flex;
+        gap: 14px;
+      }
+
+      .hole {
+        width: 22px;
+        height: 22px;
+        border: 1px solid #333;
+        border-radius: 4px;
+        background: #070707;
+      }
+
+      .strip-text {
+        color: #6f6f6f;
+        font-size: 0.74rem;
+        letter-spacing: 0.44em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      .ticket-body {
+        padding: 20px;
+      }
+
+      .title-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        align-items: start;
+      }
+
+      .brand {
+        color: var(--gold);
+        font-size: clamp(1.55rem, 6vw, 2rem);
+        font-weight: 950;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .meta-line {
+        margin-top: 8px;
+        color: #969083;
+        font-size: 0.86rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+      }
+
+      .seat-box {
+        min-width: 80px;
+        border-radius: 8px;
+        background: var(--gold);
+        color: #090700;
+        padding: 10px 8px;
+        text-align: center;
+        font-weight: 950;
+      }
+
+      .seat-box span {
+        display: block;
+        font-size: 0.62rem;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+      }
+
+      .seat-box strong {
+        display: block;
+        margin-top: 3px;
+        font-size: 1.35rem;
+      }
+
+      .profile {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 14px 0;
+        padding: 16px;
+        border: 1px solid rgba(242, 194, 0, 0.18);
+        border-radius: 8px;
+        background: rgba(242, 194, 0, 0.06);
+      }
+
+      .avatar {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+        background: var(--gold);
+        color: #0a0700;
+        font-weight: 950;
+      }
+
+      .profile-name {
+        font-size: clamp(1.1rem, 5vw, 1.35rem);
+        font-weight: 900;
+        line-height: 1.15;
+      }
+
+      .details {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin: 14px 0 12px;
+      }
+
+      .detail-value {
+        margin-top: 4px;
+        color: var(--gold-soft);
+        font-weight: 900;
+        font-size: 1.04rem;
+      }
+
+      .verified {
+        color: #807866;
+        text-align: center;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        font-size: 0.76rem;
+      }
+
+      .missing {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        text-align: center;
+      }
+
+      .missing-box {
+        width: min(460px, 100%);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 24px;
+        background: #151007;
+      }
+
+      @media (max-width: 720px) {
+        .admin-bar,
+        .controls,
+        .details,
+        .admin-row,
+        .ticket-state {
+          grid-template-columns: 1fr;
+        }
+
+        .controls .btn {
+          width: 100%;
+        }
+
+        .ticket-body {
+          padding: 18px 14px;
+        }
+
+        .film-strip {
+          gap: 6px;
+        }
+
+        .holes {
+          gap: 8px;
+        }
+
+        .hole {
+          width: 18px;
+          height: 18px;
+        }
+
+        .strip-text {
+          letter-spacing: 0.24em;
+          font-size: 0.64rem;
+        }
+      }
+
+      @media print {
+        body {
+          background: white;
+          color: black;
+        }
+
+        .controls,
+        .admin-bar .btn,
+        .actions {
+          display: none !important;
+        }
+
+        .admin {
+          width: 100%;
+          margin: 0;
+        }
+
+        .student-grid {
+          grid-template-columns: repeat(3, 1fr);
+          gap: 8px;
+        }
+
+        .pass-card {
+          box-shadow: none;
+        }
+
+        .pass-inner {
+          background: white;
+        }
+
+        .film-hole {
+          background: #c0392b !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main id="app"></main>
+
+    <script>
+      const students = [
+        ["4JK22CS001", "AAKASH SHARMA"],
+        ["4JK22CS002", "ADITH K V"],
+        ["4JK22CS003", "ADON MATHEW JOSEPH"],
+        ["4JK22CS004", "AFTHAB ABDULLA MA"],
+        ["4JK22CS005", "AKHIL A"],
+        ["4JK22CS006", "ALOK YADAV"],
+        ["4JK22CS007", "AMAL NAHAN N"],
+        ["4JK22CS008", "AMAN HASAN"],
+        ["4JK22CS010", "ANSTON ANAND BANGERA"],
+        ["4JK22CS011", "SUJAL RAMESH"],
+        ["4JK22CS012", "DEEKSHITH V"],
+        ["4JK22CS013", "DEVANAND P"],
+        ["4JK22CS014", "DHANYA V SHETTY"],
+        ["4JK22CS015", "G SAIKUMAR"],
+        ["4JK22CS016", "GAURESH G PAI"],
+        ["4JK22CS017", "HARSHITHA"],
+        ["4JK22CS018", "HIMANSHU HEGDE"],
+        ["4JK22CS019", "JESVIN GEORGE"],
+        ["4JK22CS020", "JNANESH"],
+        ["4JK22CS021", "JOYEL GEORGE"],
+        ["4JK22CS022", "JUSTIN P S"],
+        ["4JK22CS023", "KARTHIK SUBHASH TANDEL"],
+        ["4JK22CS024", "KARTHIKA RAJ P M"],
+        ["4JK22CS025", "PAANDIYAVARSHINI"],
+        ["4JK22CS026", "MADHUKAR K S"],
+        ["4JK22CS027", "MILAN C I"],
+        ["4JK22CS028", "MOKSHA SHETTY"],
+        ["4JK22CS029", "MUHAMED ISHRAQ"],
+        ["4JK22CS030", "NANDAN B DESHAMUKH"],
+        ["4JK22CS031", "NAVANEETH K"],
+        ["4JK22CS032", "NAWA N"],
+        ["4JK22CS033", "NAYANA POOJARY"],
+        ["4JK22CS034", "NEHA MAHESH P A"],
+        ["4JK22CS035", "KEERTANA"],
+        ["4JK22CS036", "PAVAN KUMAR"],
+        ["4JK22CS037", "PRAJWAL K"],
+        ["4JK22CS038", "PRAKRITHI"],
+        ["4JK22CS039", "PREKSHAN K P R"],
+        ["4JK22CS040", "RAKSHA"],
+        ["4JK22CS041", "RAKSHITHA ACHARYA"],
+        ["4JK22CS043", "RISHITHA P SALIAN"],
+        ["4JK22CS044", "RITHUL T"],
+        ["4JK22CS045", "SAGAR SHETTY"],
+        ["4JK22CS046", "SANJAN T SUVARNA"],
+        ["4JK22CS047", "SANJANA"],
+        ["4JK22CS048", "SANMITHA S"],
+        ["4JK22CS049", "SHAFIQAH M SAYED"],
+        ["4JK22CS050", "SHIBANI"],
+        ["4JK22CS051", "SHIVACHARAN J RAI"],
+        ["4JK22CS052", "SHREEPATHI"],
+        ["4JK22CS053", "SHREYA"],
+        ["4JK22CS054", "SHRIRAM I"],
+        ["4JK22CS055", "STHUTHI DOLPADY"],
+        ["4JK22CS056", "TANYA M SHETTY"],
+        ["4JK22CS057", "THRISHA U SHETTY"],
+        ["4JK22CS058", "VAISHNAVI R GATTY"],
+        ["4JK22CS059", "VEERABADRA M"],
+        ["4JK22CS060", "VIGNESH"],
+        ["4JK22CS061", "VISHNU C"],
+        ["4JK22CS062", "VIVEK M P"],
+        ["4JK22CS063", "YASHAS KUMAR"],
+        ["4JK23CS400", "DARSHAN B S"],
+        ["4JK23CS401", "KSHITIJ RAMIN"],
+        ["4JK23CS402", "NITHEESH ISHWAR NAIK"],
+        ["4JK23CS403", "SUHAS S"],
+      ].map(([usn, name], index) => ({
+        usn,
+        name,
+        seat: `A${String(index + 1).padStart(2, "0")}`,
+      }));
+
+      const app = document.getElementById("app");
+      const params = new URLSearchParams(window.location.search);
+      const scannedId = params.get("id") || params.get("usn");
+      const adminMode = params.get("admin");
+      const adminKey =
+        params.get("key") || sessionStorage.getItem("farewellAdminKey") || "";
+      const isAdmin = Boolean(adminMode && adminKey);
+      const blankStatus = { entry: false };
+      const dummyVideoUrl =
+        "https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0&autoplay=1"; // change this link later
+
+      function titleCase(name) {
+        return name
+          .toLowerCase()
+          .split(" ")
+          .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+          .join(" ");
+      }
+
+      function initials(name) {
+        return name
+          .split(" ")
+          .filter(Boolean)
+          .slice(0, 2)
+          .map((part) => part[0])
+          .join("");
+      }
+
+      function scanUrl(base, student) {
+        const cleanBase = base.split("?")[0].split("#")[0];
+        return `${cleanBase}?id=${encodeURIComponent(student.seat)}`;
+      }
+
+      function renderQr(element, text, size) {
+        element.innerHTML = "";
+        if (!window.QRCode) {
+          element.textContent = "QR";
+          return;
+        }
+        new QRCode(element, {
+          text,
+          width: size,
+          height: size,
+          colorDark: "#000000",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.M,
+        });
+      }
+
+      async function getStatus(usn) {
+        const response = await fetch(
+          `/api/status?usn=${encodeURIComponent(usn)}`,
+          { cache: "no-store" },
+        );
+        if (!response.ok) throw new Error("Status API unavailable");
+        return response.json();
+      }
+
+      async function getAllStatus() {
+        const response = await fetch("/api/all", {
+          cache: "no-store",
+          headers: { "X-Admin-Key": adminKey },
+        });
+        if (!response.ok) {
+          const data = await response.json().catch(() => ({}));
+          throw new Error(
+            data.error || `Status API unavailable (${response.status})`,
+          );
+        }
+        return response.json();
+      }
+
+      async function markStatus(usn, field, value) {
+        const response = await fetch("/api/mark", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Admin-Key": adminKey,
+          },
+          body: JSON.stringify({ usn, field, value }),
+        });
+        if (!response.ok) {
+          const data = await response.json().catch(() => ({}));
+          throw new Error(
+            data.error || `Could not update status (${response.status})`,
+          );
+        }
+        return response.json();
+      }
+
+      function adminUrl(mode) {
+        return `${window.location.href.split("?")[0]}?admin=${mode}&key=${encodeURIComponent(adminKey)}`;
+      }
+
+      function renderAdminLogin(mode = "1") {
+        app.innerHTML = `
           <section class="missing">
             <form class="missing-box" id="adminLogin">
               <h1>Admin Access</h1>
@@ -748,23 +760,23 @@
             </form>
           </section>
         `;
-      document
-        .getElementById("adminLogin")
-        .addEventListener("submit", (event) => {
-          event.preventDefault();
-          const key = document.getElementById("keyInput").value.trim();
-          if (!key) return;
-          sessionStorage.setItem("farewellAdminKey", key);
-          window.location.href = `${window.location.href.split("?")[0]}?admin=${mode}&key=${encodeURIComponent(key)}`;
-        });
-    }
+        document
+          .getElementById("adminLogin")
+          .addEventListener("submit", (event) => {
+            event.preventDefault();
+            const key = document.getElementById("keyInput").value.trim();
+            if (!key) return;
+            sessionStorage.setItem("farewellAdminKey", key);
+            window.location.href = `${window.location.href.split("?")[0]}?admin=${mode}&key=${encodeURIComponent(key)}`;
+          });
+      }
 
-    function renderPasses() {
-      const defaultBase = window.location.href.split("?")[0].split("#")[0];
-      const isLocalHost = ["localhost", "127.0.0.1"].includes(
-        window.location.hostname,
-      );
-      app.innerHTML = `
+      function renderPasses() {
+        const defaultBase = window.location.href.split("?")[0].split("#")[0];
+        const isLocalHost = ["localhost", "127.0.0.1"].includes(
+          window.location.hostname,
+        );
+        app.innerHTML = `
           <section class="admin">
             <div class="admin-bar">
               <div>
@@ -783,20 +795,20 @@
           </section>
         `;
 
-      const grid = document.getElementById("studentGrid");
-      const baseInput = document.getElementById("baseUrl");
-      const search = document.getElementById("search");
+        const grid = document.getElementById("studentGrid");
+        const baseInput = document.getElementById("baseUrl");
+        const search = document.getElementById("search");
 
-      function drawCards() {
-        const q = search.value.trim().toLowerCase();
-        const base = baseInput.value.trim() || defaultBase;
-        const filtered = students.filter((student) => {
-          return `${student.name} ${student.usn}`.toLowerCase().includes(q);
-        });
+        function drawCards() {
+          const q = search.value.trim().toLowerCase();
+          const base = baseInput.value.trim() || defaultBase;
+          const filtered = students.filter((student) => {
+            return `${student.name} ${student.usn}`.toLowerCase().includes(q);
+          });
 
-        grid.innerHTML = filtered
-          .map(
-            (student) => `
+          grid.innerHTML = filtered
+            .map(
+              (student) => `
                 <article class="pass-card">
                   <div class="film-side">
                     <span class="film-hole"></span>
@@ -830,42 +842,42 @@
                   </div>
                 </article>
               `,
-          )
-          .join("");
+            )
+            .join("");
 
-        filtered.forEach((student) => {
-          const qr = grid.querySelector(`[data-usn="${student.usn}"]`);
-          renderQr(qr, scanUrl(base, student), 116);
+          filtered.forEach((student) => {
+            const qr = grid.querySelector(`[data-usn="${student.usn}"]`);
+            renderQr(qr, scanUrl(base, student), 116);
+          });
+        }
+
+        document
+          .getElementById("printBtn")
+          .addEventListener("click", () => window.print());
+        document
+          .getElementById("regenBtn")
+          .addEventListener("click", drawCards);
+        document.getElementById("adminBtn").addEventListener("click", () => {
+          window.location.href = adminUrl("1");
         });
+        search.addEventListener("input", drawCards);
+        drawCards();
+
+        if (isLocalHost) {
+          fetch("/api/network", { cache: "no-store" })
+            .then((response) => (response.ok ? response.json() : null))
+            .then((data) => {
+              if (!data?.url) return;
+              baseInput.value = data.url;
+              drawCards();
+            })
+            .catch(() => {});
+        }
       }
 
-      document
-        .getElementById("printBtn")
-        .addEventListener("click", () => window.print());
-      document
-        .getElementById("regenBtn")
-        .addEventListener("click", drawCards);
-      document.getElementById("adminBtn").addEventListener("click", () => {
-        window.location.href = adminUrl("1");
-      });
-      search.addEventListener("input", drawCards);
-      drawCards();
-
-      if (isLocalHost) {
-        fetch("/api/network", { cache: "no-store" })
-          .then((response) => (response.ok ? response.json() : null))
-          .then((data) => {
-            if (!data?.url) return;
-            baseInput.value = data.url;
-            drawCards();
-          })
-          .catch(() => {});
-      }
-    }
-
-    async function renderAdmin() {
-      if (adminKey) sessionStorage.setItem("farewellAdminKey", adminKey);
-      app.innerHTML = `
+      async function renderAdmin() {
+        if (adminKey) sessionStorage.setItem("farewellAdminKey", adminKey);
+        app.innerHTML = `
           <section class="admin">
             <div class="admin-bar">
               <div>
@@ -883,29 +895,29 @@
           </section>
         `;
 
-      const list = document.getElementById("adminList");
-      const search = document.getElementById("adminSearch");
-      let state = {};
+        const list = document.getElementById("adminList");
+        const search = document.getElementById("adminSearch");
+        let state = {};
 
-      async function drawAdmin() {
-        try {
-          state = await getAllStatus();
-        } catch (error) {
-          list.innerHTML = `<div class="missing-box">${error.message}</div>`;
-          return;
-        }
+        async function drawAdmin() {
+          try {
+            state = await getAllStatus();
+          } catch (error) {
+            list.innerHTML = `<div class="missing-box">${error.message}</div>`;
+            return;
+          }
 
-        const q = search.value.trim().toLowerCase();
-        const filtered = students.filter((student) => {
-          return `${student.name} ${student.usn} ${student.seat}`
-            .toLowerCase()
-            .includes(q);
-        });
+          const q = search.value.trim().toLowerCase();
+          const filtered = students.filter((student) => {
+            return `${student.name} ${student.usn} ${student.seat}`
+              .toLowerCase()
+              .includes(q);
+          });
 
-        list.innerHTML = filtered
-          .map((student) => {
-            const status = { ...blankStatus, ...(state[student.usn] || {}) };
-            return `
+          list.innerHTML = filtered
+            .map((student) => {
+              const status = { ...blankStatus, ...(state[student.usn] || {}) };
+              return `
                 <article class="admin-row" data-usn="${student.usn}">
                   <div class="seat-pill">${student.seat}</div>
                   <div>
@@ -915,39 +927,39 @@
                   <button class="btn secondary ${status.entry ? "used" : ""}" data-field="entry" data-value="${!status.entry}">${status.entry ? "Undo Entry" : "Verify Entry"}</button>
                 </article>
               `;
-          })
-          .join("");
+            })
+            .join("");
+        }
+
+        list.addEventListener("click", async (event) => {
+          const button = event.target.closest("button[data-field]");
+          if (!button || button.disabled) return;
+          const row = button.closest(".admin-row");
+          button.disabled = true;
+          button.textContent = "Saving...";
+          await markStatus(
+            row.dataset.usn,
+            button.dataset.field,
+            button.dataset.value === "true",
+          );
+          await drawAdmin();
+        });
+
+        document.getElementById("passesBtn").addEventListener("click", () => {
+          window.location.href = adminUrl("passes");
+        });
+        document
+          .getElementById("refreshBtn")
+          .addEventListener("click", drawAdmin);
+        document
+          .getElementById("printBtn")
+          .addEventListener("click", () => window.print());
+        search.addEventListener("input", drawAdmin);
+        await drawAdmin();
       }
 
-      list.addEventListener("click", async (event) => {
-        const button = event.target.closest("button[data-field]");
-        if (!button || button.disabled) return;
-        const row = button.closest(".admin-row");
-        button.disabled = true;
-        button.textContent = "Saving...";
-        await markStatus(
-          row.dataset.usn,
-          button.dataset.field,
-          button.dataset.value === "true",
-        );
-        await drawAdmin();
-      });
-
-      document.getElementById("passesBtn").addEventListener("click", () => {
-        window.location.href = adminUrl("passes");
-      });
-      document
-        .getElementById("refreshBtn")
-        .addEventListener("click", drawAdmin);
-      document
-        .getElementById("printBtn")
-        .addEventListener("click", () => window.print());
-      search.addEventListener("input", drawAdmin);
-      await drawAdmin();
-    }
-
-    function renderTicket(student) {
-      app.innerHTML = `
+      function renderTicket(student) {
+        app.innerHTML = `
           <section class="ticket-wrap">
             <article class="ticket">
               <div class="film-strip">
@@ -1011,51 +1023,51 @@
           </section>
         `;
 
-      async function refreshTicket() {
-        let status = blankStatus;
-        let apiConnected = true;
-        try {
-          status = { ...blankStatus, ...(await getStatus(student.usn)) };
-        } catch (error) {
-          apiConnected = false;
+        async function refreshTicket() {
+          let status = blankStatus;
+          let apiConnected = true;
+          try {
+            status = { ...blankStatus, ...(await getStatus(student.usn)) };
+          } catch (error) {
+            apiConnected = false;
+          }
+
+          document.getElementById("entryStatus").textContent = status.entry
+            ? "VERIFIED"
+            : "NOT VERIFIED";
+          document
+            .getElementById("entryPill")
+            .classList.toggle("ok", status.entry);
+          if (!apiConnected) {
+            document.getElementById("verifiedLine").textContent =
+              "Ticket details loaded";
+            return false;
+          }
+
+          document.getElementById("verifiedLine").textContent = status.entry
+            ? "Entry verified"
+            : "Waiting for entry verification";
+          return true;
         }
 
-        document.getElementById("entryStatus").textContent = status.entry
-          ? "VERIFIED"
-          : "NOT VERIFIED";
-        document
-          .getElementById("entryPill")
-          .classList.toggle("ok", status.entry);
-        if (!apiConnected) {
-          document.getElementById("verifiedLine").textContent =
-            "Ticket details loaded";
-          return false;
-        }
+        refreshTicket().then((apiConnected) => {
+          if (apiConnected) setInterval(refreshTicket, 3000);
+        });
 
-        document.getElementById("verifiedLine").textContent = status.entry
-          ? "Entry verified"
-          : "Waiting for entry verification";
-        return true;
+        const verifyVideoBtn = document.getElementById("verifyVideoBtn");
+        const videoContainer = document.getElementById("videoContainer");
+        const videoFrame = document.getElementById("videoFrame");
+        verifyVideoBtn?.addEventListener("click", () => {
+          verifyVideoBtn.disabled = true;
+          verifyVideoBtn.textContent = "Loading video...";
+          videoFrame.src = dummyVideoUrl;
+          videoContainer.style.display = "block";
+          verifyVideoBtn.textContent = "Verified + Video Loaded";
+        });
       }
 
-      refreshTicket().then((apiConnected) => {
-        if (apiConnected) setInterval(refreshTicket, 3000);
-      });
-
-      const verifyVideoBtn = document.getElementById("verifyVideoBtn");
-      const videoContainer = document.getElementById("videoContainer");
-      const videoFrame = document.getElementById("videoFrame");
-      verifyVideoBtn?.addEventListener("click", () => {
-        verifyVideoBtn.disabled = true;
-        verifyVideoBtn.textContent = "Loading video...";
-        videoFrame.src = dummyVideoUrl;
-        videoContainer.style.display = "block";
-        verifyVideoBtn.textContent = "Verified + Video Loaded";
-      });
-    }
-
-    function renderMissing() {
-      app.innerHTML = `
+      function renderMissing() {
+        app.innerHTML = `
             <div class="missing-box">
               <h1>Invalid Pass</h1>
               <p class="sub">No senior found for this QR code.</p>
@@ -1064,10 +1076,10 @@
             </div>
           </section>
         `;
-    }
+      }
 
-    function renderScanOnly() {
-      app.innerHTML = `
+      function renderScanOnly() {
+        app.innerHTML = `
           <section class="missing">
             <div class="missing-box">
               <h1>Logout Pass</h1>
@@ -1075,26 +1087,25 @@
             </div>
           </section>
         `;
-    }
+      }
 
-    if (adminMode && !adminKey) {
-      renderAdminLogin(adminMode);
-    } else if (isAdmin && adminMode === "1") {
-      renderAdmin();
-    } else if (isAdmin && adminMode === "passes") {
-      sessionStorage.setItem("farewellAdminKey", adminKey);
-      renderPasses();
-    } else if (scannedId) {
-      const student = students.find(
-        (item) =>
-          item.usn.toLowerCase() === scannedId.toLowerCase() ||
-          item.seat.toLowerCase() === scannedId.toLowerCase(),
-      );
-      student ? renderTicket(student) : renderMissing();
-    } else {
-      renderScanOnly();
-    }
-  </script>
-</body>
-
+      if (adminMode && !adminKey) {
+        renderAdminLogin(adminMode);
+      } else if (isAdmin && adminMode === "1") {
+        renderAdmin();
+      } else if (isAdmin && adminMode === "passes") {
+        sessionStorage.setItem("farewellAdminKey", adminKey);
+        renderPasses();
+      } else if (scannedId) {
+        const student = students.find(
+          (item) =>
+            item.usn.toLowerCase() === scannedId.toLowerCase() ||
+            item.seat.toLowerCase() === scannedId.toLowerCase(),
+        );
+        student ? renderTicket(student) : renderMissing();
+      } else {
+        renderScanOnly();
+      }
+    </script>
+  </body>
 </html>
