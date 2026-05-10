@@ -662,6 +662,19 @@
       const isAdmin = Boolean(adminMode && adminKey);
       const blankStatus = { entry: false };
       const dummyVideoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"; // change this link later
+      const localStorageKey = "farewellStatus";
+
+      function loadLocalStatus() {
+        try {
+          return JSON.parse(localStorage.getItem(localStorageKey) || "{}");
+        } catch {
+          return {};
+        }
+      }
+
+      function saveLocalStatus(status) {
+        localStorage.setItem(localStorageKey, JSON.stringify(status));
+      }
 
       function titleCase(name) {
         return name
@@ -1084,7 +1097,7 @@
             verifyVideoBtn.textContent = "Verified + Video Opened";
           } catch (error) {
             alert(error.message || "Unable to verify entry.");
-            verifyVideoBtn.textContent = "Verify & Play Video";
+            verifyVideoBtn.textContent = "Verify Here";
           } finally {
             verifyVideoBtn.disabled = false;
           }
