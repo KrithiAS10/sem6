@@ -736,21 +736,12 @@
           });
           if (response.ok) return response.json();
         } catch (error) {
-          console.warn("Admin status API unavailable, using local fallback", error);
-        }
-        return loadLocalStatus();
-      }
-        const response = await fetch("/api/all", {
-          cache: "no-store",
-          headers: { "X-Admin-Key": adminKey },
-        });
-        if (!response.ok) {
-          const data = await response.json().catch(() => ({}));
-          throw new Error(
-            data.error || `Status API unavailable (${response.status})`,
+          console.warn(
+            "Admin status API unavailable, using local fallback",
+            error,
           );
         }
-        return response.json();
+        return loadLocalStatus();
       }
 
       async function markStatus(usn, field, value) {
@@ -764,7 +755,10 @@
             body: JSON.stringify({ usn, field, value }),
           });
           if (response.ok) return response.json();
-          console.warn("Mark API returned non-ok status, falling back to local", response.status);
+          console.warn(
+            "Mark API returned non-ok status, falling back to local",
+            response.status,
+          );
         } catch (error) {
           console.warn("Mark API unavailable, using local fallback", error);
         }
