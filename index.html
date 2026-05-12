@@ -590,8 +590,8 @@
         ["4JK22CS006", "ALOK YADAV"],
         ["4JK22CS007", "AMAL NAHAN N"],
         ["4JK22CS008", "AMAN HASAN"],
-        ["4JK22CS010", "ANSTON ANAND BANGERA"],
-        ["4JK22CS011", "SUJAL RAMESH"],
+        ["4JK22CS010", "ANSTON ANAND"],
+        ["4JK22CS011", "BANGERA SUJAL RAMESH"],
         ["4JK22CS012", "DEEKSHITH V"],
         ["4JK22CS013", "DEVANAND P"],
         ["4JK22CS014", "DHANYA V SHETTY"],
@@ -698,7 +698,13 @@
         return `${cleanBase}?id=${encodeURIComponent(student.seat)}`;
       }
 
+      const qrCache = {};
+
       function renderQr(element, text, size) {
+        if (qrCache[text]) {
+          element.innerHTML = `<img src="${qrCache[text]}" width="${size}" height="${size}" />`;
+          return;
+        }
         element.innerHTML = "";
         if (!window.QRCode) {
           element.textContent = "QR";
@@ -712,6 +718,11 @@
           colorLight: "#ffffff",
           correctLevel: QRCode.CorrectLevel.M,
         });
+        // Cache the data URL after generation
+        setTimeout(() => {
+          const img = element.querySelector("img");
+          if (img) qrCache[text] = img.src;
+        }, 100);
       }
 
       async function getStatus(usn) {
@@ -1043,7 +1054,7 @@
                 <div class="holes"><span class="hole"></span><span class="hole"></span><span class="hole"></span></div>
               </div>
               <div class="verified" id="verifiedLine">Ticket details loaded</div>
-              <button class="btn" id="verifyVideoBtn" style="margin:18px auto 0;display:block;">Verify & Play Video</button>
+              <button class="btn" id="verifyVideoBtn" style="margin:18px auto 0;display:block;">Verify</button>
               <br />
             </article>
           </section>
@@ -1088,7 +1099,7 @@
             await markStatus(student.usn, "entry", true);
             await refreshTicket();
             window.open(dummyVideoUrl, "_blank");
-            verifyVideoBtn.textContent = "Verified + Video Opened";
+            verifyVideoBtn.textContent = "Verified";
           } catch (error) {
             alert(error.message || "Unable to verify entry.");
             verifyVideoBtn.textContent = "Verify Here";
